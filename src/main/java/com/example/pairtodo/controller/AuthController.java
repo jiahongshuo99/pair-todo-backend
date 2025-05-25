@@ -1,6 +1,8 @@
 package com.example.pairtodo.controller;
 
 import com.example.pairtodo.model.User;
+import com.example.pairtodo.payload.LoginRequest;
+import com.example.pairtodo.payload.LoginResponse;
 import com.example.pairtodo.payload.RegisterRequest;
 import com.example.pairtodo.payload.RegisterResponse;
 import com.example.pairtodo.service.UserService;
@@ -30,6 +32,22 @@ public class AuthController {
         String token = jwtTokenUtil.generateToken(user);
         
         RegisterResponse response = new RegisterResponse(
+            user.getId(),
+            user.getAccountId(),
+            user.getUsername(),
+            user.getPhone(),
+            token
+        );
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        User user = userService.authenticate(loginRequest.getPhone(), loginRequest.getPassword());
+        String token = jwtTokenUtil.generateToken(user);
+        
+        LoginResponse response = new LoginResponse(
             user.getId(),
             user.getAccountId(),
             user.getUsername(),
